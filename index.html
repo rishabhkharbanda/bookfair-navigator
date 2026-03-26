@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Delhi World Book Fair 2026 — Navigator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/sidebar.css"/>
+  <link rel="stylesheet" href="css/map.css"/>
+</head>
+<body>
+<div id="shell">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <div id="sidebar">
+    <div id="sb-head">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">World Book Fair 2026</div>
+          <div class="brand-sub">NEW DELHI · JAN 10–18 · HALLS 2–5</div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <svg class="sico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" type="text" placeholder="Search stalls, publishers…" autocomplete="off"/>
+        <button id="search-clear">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Category chips -->
+      <div class="chips" id="cats">
+        <button class="chip active" data-cat="all">ALL</button>
+        <button class="chip" data-cat="publisher">PUBLISHER</button>
+        <button class="chip" data-cat="food">FOOD</button>
+        <button class="chip" data-cat="info">INFO</button>
+        <button class="chip" data-cat="special">SPECIAL</button>
+      </div>
+    </div>
+
+    <!-- Mode bar -->
+    <div class="mode-bar" id="mode-bar">
+      <button class="mode-btn active" data-mode="browse">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        Browse
+      </button>
+      <button class="mode-btn" data-mode="route">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 17l4-4m0 0l4-4 4 4 4-4"/>
+        </svg>
+        A→B
+      </button>
+      <button class="mode-btn" data-mode="edit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+    </div>
+
+    <!-- A→B panel -->
+    <div id="ab-panel">
+      <div class="ab-row" id="ab-from-row">
+        <div class="ab-dot" style="background:#059669;border:2px solid #059669"></div>
+        <div class="ab-lbl">FROM</div>
+        <div class="ab-name" id="ab-from-name" style="color:var(--text3)">Click to pick…</div>
+        <button class="ab-clr" id="ab-from-clr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="ab-line"></div>
+      </div>
+      <div class="ab-row" id="ab-to-row">
+        <div class="ab-dot" style="background:#dc2626;border:2px solid #dc2626"></div>
+        <div class="ab-lbl">TO</div>
+        <div class="ab-name" id="ab-to-name" style="color:var(--text3)">Click to pick…</div>
+        <button class="ab-clr" id="ab-to-clr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="ab-acts">
+        <button class="ab-go" id="ab-go" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          </svg>
+          Get Route
+        </button>
+        <button class="ab-rst" id="ab-rst">Reset</button>
+      </div>
+    </div>
+
+    <!-- Nav status card -->
+    <div id="nav-status">
+      <div id="ns-inner">
+        <div class="ns-lbl">NAVIGATING</div>
+        <div class="ns-dest" id="ns-dest">—</div>
+        <div class="ns-stats">
+          <div><div class="ns-val" id="ns-dist">—</div><div class="ns-unit">METRES</div></div>
+          <div><div class="ns-val" id="ns-time">—</div><div class="ns-unit">MIN</div></div>
+          <div><div class="ns-val" id="ns-pct">0</div><div class="ns-unit">%</div></div>
+        </div>
+        <div class="ns-prog"><div id="ns-bar"></div></div>
+        <button class="ns-walk" id="ns-walk">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Start Walking
+        </button>
+      </div>
+    </div>
+
+    <!-- Stall list -->
+    <div id="list-wrap">
+      <div class="list-hdr">
+        <span id="list-lbl">ALL STALLS</span>
+        <span id="list-ct"></span>
+      </div>
+      <div id="stall-list"></div>
+    </div>
+
+    <!-- Selected stall panel -->
+    <div id="sel-panel">
+      <div class="sp-hd">
+        <div class="sp-ico" id="sp-ico"></div>
+        <div>
+          <div class="sp-name" id="sp-name"></div>
+          <div class="sp-desc" id="sp-desc"></div>
+        </div>
+        <button class="sp-close" id="sp-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="sp-tags" id="sp-tags"></div>
+      <div class="sp-dims" id="sp-dims"></div>
+      <div class="sp-acts">
+        <button class="sp-from-btn" id="sp-from">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+          </svg>
+          Set From
+        </button>
+        <button class="sp-nav-btn" id="sp-nav">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          Navigate
+        </button>
+      </div>
+      <!-- Facing direction (edit mode only) -->
+      <div id="facing-row" style="display:none;margin-top:10px">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;color:var(--text3);margin-bottom:5px">ENTRY SIDE (facing)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px" id="facing-btns">
+          <button class="facing-btn" data-f="N" title="Entry from top">▲ NORTH</button>
+          <button class="facing-btn" data-f="S" title="Entry from bottom">▼ SOUTH</button>
+          <button class="facing-btn" data-f="E" title="Entry from right">▶ EAST</button>
+          <button class="facing-btn" data-f="W" title="Entry from left">◀ WEST</button>
+        </div>
+        <div style="font-size:9px;color:var(--text3);margin-top:5px">
+          <span style="display:inline-block;width:12px;height:3px;background:#22c55e;border-radius:2px;vertical-align:middle;margin-right:3px"></span>
+          Green stripe = entry side where visitors approach
+        </div>
+      </div>
+      <button id="sp-del">Remove Stall</button>
+    </div>
+  </div><!-- /sidebar -->
+
+  <!-- ══════════════════════════════════════════
+       MAP AREA
+  ══════════════════════════════════════════ -->
+  <div id="map-area">
+    <div id="map-vp">
+      <div id="map-world">
+        <svg id="map-svg"></svg>
+        <div id="static-layer"></div>
+        <div id="stalls-layer"></div>
+        <div id="player"></div>
+        <div id="pins-layer"></div>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-pill">
+        <div class="hud-live"></div>
+        <div class="hud-txt" id="hud-txt">Bharat Mandapam</div>
+      </div>
+    </div>
+
+    <!-- Zoom / centre controls -->
+    <div id="map-ctrls">
+      <div class="ctrl-grp">
+        <button class="ctrl-btn" id="zi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="ctrl-btn" id="zr"><span id="zoom-pct">42%</span></button>
+        <button class="ctrl-btn" id="zo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/></svg>
+        </button>
+      </div>
+      <div class="ctrl-grp">
+        <button class="ctrl-btn" id="ctr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+      <div class="leg-title">LEGEND</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#dbeafe;border-color:#93c5fd"></div><div class="leg-lbl">Publisher / Book</div></div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#d1fae5;border-color:#6ee7b7"></div><div class="leg-lbl">Food &amp; Beverages</div></div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#ede9fe;border-color:#c4b5fd"></div><div class="leg-lbl">Special Zone</div></div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#cffafe;border-color:#67e8f9"></div><div class="leg-lbl">Info / Services</div></div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#fef3c7;border-color:#fcd34d"></div><div class="leg-lbl">Theme Pavilion</div></div>
+      <div class="leg-item"><div class="leg-swatch" style="background:rgba(8,145,178,0.15);border-color:rgba(8,145,178,0.4)"></div><div class="leg-lbl">Toilet / Utility</div></div>
+      <div class="leg-item"><div style="width:12px;height:4px;background:#22c55e;border-radius:2px;flex-shrink:0"></div><div class="leg-lbl">Entry side (facing)</div></div>
+    </div>
+
+    <!-- Edit mode badge -->
+    <div id="edit-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="11" height="11">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      EDIT MODE — Drag · Resize corner
+      <button id="add-stall-btn">+ Add Stall</button>
+    </div>
+
+    <!-- Pick mode overlay -->
+    <div id="pick-overlay">
+      <div class="pick-lbl" id="pick-lbl">Click a stall to set FROM</div>
+    </div>
+
+    <!-- Minimap -->
+    <div id="minimap">
+      <div id="mm-lbl">OVERVIEW</div>
+      <canvas id="mm-canvas" width="240" height="180"></canvas>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- Add Stall Modal -->
+    <div id="add-modal">
+      <div class="add-modal-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <div class="add-modal-title">Add New Stall</div>
+          <button id="add-modal-x" style="background:none;border:1px solid var(--border);color:var(--text2);width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="11" height="11"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="fld"><label>STALL NAME</label><input id="add-name" type="text" placeholder="e.g. Oxford University Press"/></div>
+        <div class="fld"><label>DESCRIPTION</label><input id="add-desc" type="text" placeholder="e.g. Academic &amp; Reference Books"/></div>
+        <div class="fld">
+          <label>CATEGORY</label>
+          <div class="cat-opts" id="add-cat-row">
+            <button class="cat-opt" data-cat="publisher">PUBLISHER</button>
+            <button class="cat-opt" data-cat="food">FOOD</button>
+            <button class="cat-opt" data-cat="info">INFO</button>
+            <button class="cat-opt" data-cat="special">SPECIAL</button>
+          </div>
+        </div>
+        <div class="fld">
+          <label>ENTRY SIDE (which side faces the aisle)</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px" id="add-facing-row">
+            <button class="facing-btn" data-f="N">▲ N</button>
+            <button class="facing-btn active" data-f="S">▼ S</button>
+            <button class="facing-btn" data-f="E">▶ E</button>
+            <button class="facing-btn" data-f="W">◀ W</button>
+          </div>
+        </div>
+        <div class="fld">
+          <label>POSITION &amp; SIZE</label>
+          <div class="dims-row">
+            <div><label>X</label><input id="add-x" type="number" value="600"/></div>
+            <div><label>Y</label><input id="add-y" type="number" value="400"/></div>
+            <div><label>W</label><input id="add-w" type="number" value="36"/></div>
+            <div><label>H</label><input id="add-h" type="number" value="30"/></div>
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);cursor:pointer">
+          <input id="add-open" type="checkbox" checked style="width:13px;height:13px;accent-color:var(--blue)"/>
+          Open for visitors
+        </label>
+        <button class="add-confirm" id="add-confirm">Add to Floor Plan</button>
+        <button class="add-cancel" id="add-cancel">Cancel</button>
+      </div>
+    </div>
+  </div><!-- /map-area -->
+
+</div><!-- /shell -->
+
+<!-- Entry point — ES module, deferred automatically -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
