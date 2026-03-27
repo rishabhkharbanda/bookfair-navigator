@@ -259,30 +259,28 @@ export function computePath(fromPt, toStall) {
 
   if (!startId || !endId) return [fromPt, entry];
 
-  // Inject two temporary virtual nodes so A* can start/end at exact coords
+  // ── Build a FULLY INDEPENDENT copy of nodes + adj ──────
+  // Critical: deep-copy every adjacency array so injecting temp nodes
+  // never mutates the shared GRAPH singleton between calls.
   const TS = '__TS__', TE = '__TE__';
 
-  // Build temporary augmented copies (shallow clone of adj lists)
   const tmpNodes = new Map(GRAPH.nodes);
   const tmpAdj   = new Map();
-  for (const [id, nbrs] of GRAPH.adj) tmpAdj.set(id, [...nbrs]);
+  for (const [id, nbrs] of GRAPH.adj) {
+    tmpAdj.set(id, nbrs.map(n => ({ ...n }))); // deep copy
+  }
 
   const sCost = d2(fromPt, GRAPH.nodes.get(startId));
-  const eCost = d2(entry,  GRAPH.nodes.get(endId));
-
   tmpNodes.set(TS, { id: TS, x: fromPt.x, y: fromPt.y });
   tmpAdj.set(TS, [{ id: startId, cost: sCost }]);
   tmpAdj.get(startId).push({ id: TS, cost: sCost });
 
+  const eCost = d2(entry, GRAPH.nodes.get(endId));
   tmpNodes.set(TE, { id: TE, x: entry.x, y: entry.y });
   tmpAdj.set(TE, [{ id: endId, cost: eCost }]);
   tmpAdj.get(endId).push({ id: TE, cost: eCost });
 
   const graphPath = aStarWaypoint(tmpNodes, tmpAdj, TS, TE);
-
-  // Remove temp connections we injected (keep GRAPH.adj clean for next call)
-  const sn = tmpAdj.get(startId); const si = sn?.findIndex(n=>n.id===TS); if(si!==-1 && si!=null) sn.splice(si,1);
-  const en = tmpAdj.get(endId);   const ei = en?.findIndex(n=>n.id===TE); if(ei!==-1 && ei!=null) en.splice(ei,1);
 
   if (!graphPath.length) return [fromPt, entry];
 
@@ -290,7 +288,10 @@ export function computePath(fromPt, toStall) {
   pts[0] = { ...fromPt };
   pts[pts.length - 1] = { ...entry };
 
-  return dedupe(rdp(pts, 3));
+  // DO NOT run RDP simplification here — it collapses L-shaped aisle
+  // turns into straight diagonals because intermediate waypoints lie
+  // close to the straight line between start and end.
+  return dedupe(pts);
 }
 
 // ══════════════════════════════════════════════════════════
